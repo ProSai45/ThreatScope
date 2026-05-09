@@ -1,0 +1,316 @@
+        padding: 12px 16px;
+      }
+    }
+
+    /* Training path */
+    .path-shell {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .path-grid {
+      display: grid;
+      gap: 20px;
+    }
+
+    .path-card {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 18px;
+      align-items: center;
+      background:
+        radial-gradient(circle at top left, rgba(192, 132, 252, 0.10), transparent 35%),
+        rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 22px;
+      padding: 24px;
+      transition: all 0.3s;
+    }
+
+    .path-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(192, 132, 252, 0.25);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25);
+    }
+
+    .path-step-num {
+      width: 46px;
+      height: 46px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, rgba(192, 132, 252, 0.25), rgba(245, 158, 11, 0.12));
+      border: 1px solid rgba(192, 132, 252, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+    }
+
+    .path-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 6px;
+    }
+
+    .path-card p {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    .path-status {
+      font-size: 0.72rem;
+      padding: 6px 10px;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+      white-space: nowrap;
+      font-weight: 700;
+    }
+
+    .path-card.done .path-status {
+      color: #86efac;
+      background: rgba(34, 197, 94, 0.10);
+      border-color: rgba(34, 197, 94, 0.18);
+    }
+
+    .path-card.locked {
+      opacity: 0.55;
+    }
+
+    .path-card.locked:hover {
+      transform: none;
+      cursor: not-allowed;
+    }
+
+    /* Difficulty selector */
+    .difficulty-panel {
+      max-width: 850px;
+      margin: 0 auto 32px;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 22px;
+      padding: 24px;
+    }
+
+    .difficulty-panel h3 {
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .difficulty-panel p {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .difficulty-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .difficulty-btn {
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      transition: all 0.3s;
+    }
+
+    .difficulty-btn.active,
+    .difficulty-btn:hover {
+      color: white;
+      background: linear-gradient(135deg, rgba(192, 132, 252, 0.28), rgba(245, 158, 11, 0.12));
+      border-color: rgba(192, 132, 252, 0.3);
+    }
+
+    /* Confidence selector */
+    .confidence-panel {
+      margin-top: 24px;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .confidence-panel h4 {
+      font-size: 0.85rem;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .confidence-options {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .confidence-btn {
+      padding: 9px 14px;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, 0.045);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      transition: all 0.25s;
+    }
+
+    .confidence-btn.active {
+      background: rgba(192, 132, 252, 0.20);
+      border-color: rgba(192, 132, 252, 0.35);
+      color: white;
+    }
+
+    /* Clue highlighting */
+    .threat-clue {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 7px;
+      background: rgba(239, 68, 68, 0.13);
+      border: 1px solid rgba(239, 68, 68, 0.24);
+      color: #fca5a5;
+      box-shadow: 0 0 18px rgba(239, 68, 68, 0.08);
+    }
+
+    .safe-clue {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 7px;
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.20);
+      color: #86efac;
+    }
+
+    .clue-breakdown {
+      margin-top: 18px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .clue-item {
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 14px;
+      padding: 13px;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .clue-item strong {
+      color: var(--text-primary);
+    }
+
+    /* Streak and assessment */
+    .mini-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .final-assessment-card .btn-primary,
+    .final-assessment-card .btn-secondary {
+      margin-top: 4px;
+    }
+
+    .final-assessment-card .btn-secondary {
+      margin-left: 0 !important;
+    }
+
+    .mini-stat {
+      background: rgba(0, 0, 0, 0.20);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .mini-stat-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .mini-stat-label {
+      color: var(--text-tertiary);
+      font-size: 0.7rem;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .final-assessment-card {
+      margin-top: 0;
+      padding: 24px;
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at top left, rgba(245, 158, 11, 0.14), transparent 38%),
+        rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(245, 158, 11, 0.20);
+    }
+
+    .final-assessment-card h3 {
+      margin-bottom: 8px;
+    }
+
+    .final-assessment-card p {
+      color: var(--text-secondary);
+      font-size: 0.86rem;
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    .review-btn {
+      margin-top: 10px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.045);
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .reset-progress-btn {
+      margin-top: 16px;
+      width: 100%;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(239, 68, 68, 0.10);
+      border: 1px solid rgba(239, 68, 68, 0.18);
+      color: #fca5a5;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .path-card {
+        grid-template-columns: 1fr;
+      }
+
+      .difficulty-options {
+        grid-template-columns: 1fr;
+      }
+
+      .mini-stat-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+

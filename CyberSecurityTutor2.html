@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ThreatScope — Cyber Attack Simulator</title>
+  <link rel="icon" href="data:,">
+  <meta name="description"
+    content="ThreatScope is an interactive cybersecurity awareness platform that teaches phishing, credential attacks, SQL injection, and social engineering through realistic simulations.">
+  <meta name="theme-color" content="#050510">
+
+  <meta property="og:title" content="ThreatScope — Cyber Attack Simulator">
+  <meta property="og:description"
+    content="Learn cybersecurity through realistic attack simulations, decision-based challenges, progress tracking, and adaptive analysis.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="preview.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="ThreatScope — Cyber Attack Simulator">
+  <meta name="twitter:description"
+    content="Interactive cybersecurity awareness training through realistic attack scenarios.">
+  <meta name="twitter:image" content="preview.png">
+    <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/simulation.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/certificate.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+<body>
+
+  <!-- Background orbs -->
+  <div class="gradient-orb gradient-orb-1"></div>
+  <div class="gradient-orb gradient-orb-2"></div>
+  <div class="gradient-orb gradient-orb-3"></div>
+
+  <!-- Canvas for particles -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Floating hint -->
+  <div class="floating-hint" id="floatingHint">
+    <span class="hint-icon">💡</span>
+    <span id="hintText">Think like an attacker — where would you look for vulnerabilities?</span>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-brand" onclick="navigateTo('landing')">
+      <div class="brand-icon">⬡</div>
+      ThreatScope
+    </div>
+
+    <div class="nav-links">
+      <span class="nav-link active" onclick="navigateTo('landing')" data-page="landing">Home</span>
+      <span class="nav-link" onclick="navigateTo('path')" data-page="path">Training Path</span>
+      <span class="nav-link" onclick="navigateTo('attacks')" data-page="attacks">Simulations</span>
+      <span class="nav-link" onclick="navigateTo('verify')" data-page="verify">Verify Certificate</span>
+      <span class="nav-link" onclick="navigateTo('dashboard')" data-page="dashboard">Dashboard</span>
+
+
+      <button class="nav-cta nav-start-btn" id="startTrainingBtn" onclick="navigateTo('path')">
+        Start Training
+      </button>
+
+      <div class="account-menu" id="accountMenu" style="display:none;">
+        <button type="button" class="account-trigger" id="accountTrigger" onclick="toggleAccountMenu()">
+          <span id="accountInitials">U</span>
+          <span class="account-chevron">▾</span>
+        </button>
+
+        <div class="account-dropdown" id="accountDropdown">
+          <div class="account-dropdown-user">
+            <span class="account-small-label">Signed in as</span>
+            <strong id="accountEmail">user@example.com</strong>
+          </div>
+
+          <button onclick="navigateTo('dashboard'); closeAccountMenu();">View Dashboard</button>
+          <button onclick="logoutUser(); closeAccountMenu();" class="danger">Logout</button>
+        </div>
+      </div>
+
+      <button type="button" class="nav-cta" id="authBtn" onclick="openAuthModal()">
+        Login
+      </button>
+    </div>
+
+    <button class="nav-hamburger" id="navHamburger" onclick="toggleMobileNav()" aria-label="Open navigation menu"
+      aria-expanded="false">
+      ☰
+    </button>
+
+  </nav>
+
+  <!-- PAGE: LANDING -->
+  <div class="page active" id="page-landing">
+    <section class="hero section">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        Cyber Awareness Simulation Platform
+      </div>
+
+      <h1>Experience Attacks.<br><span class="gradient-text">Learn Real Defence.</span></h1>
+
+      <p class="hero-sub">
+        ThreatScope helps users understand how real cyber threats unfold through realistic decision-based scenarios,
+        modern attack awareness, adaptive feedback, and personalised improvement tracking.
+      </p>
+      <div class="hero-cta-group">
+
+        <button class="btn-primary" onclick="navigateTo('path')">
+          Start Training Path
+          <span class="glow-pulse"></span>
+        </button>
+
+        <button class="btn-secondary" onclick="navigateTo('dashboard')">View Dashboard</button>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-mockup">
+          <div class="mockup-inner">
+            <div class="mockup-topbar">
+              <div class="mockup-dot"></div>
+              <div class="mockup-dot"></div>
+              <div class="mockup-dot"></div>
+            </div>
+            <div class="mockup-content">
+              <div class="mockup-card">
+                <div class="mc-label">Scenarios Reviewed</div>
+                <div class="mc-value count-up" data-target="12">0</div>
+                <div class="mockup-bar">
+                  <div class="mockup-bar-fill" data-width="78%"></div>
+                </div>
+              </div>
+              <div class="mockup-card">
+                <div class="mc-label">Correct Decisions</div>
+                <div class="mc-value count-up" data-target="8">0</div>
+                <div class="mockup-bar">
+                  <div class="mockup-bar-fill" data-width="34%"></div>
+                </div>
+              </div>
+              <div class="mockup-card">
+                <div class="mc-label">Awareness Score</div>
+                <div class="mc-value count-up" data-target="92">0</div>
+                <div class="mockup-bar">
+                  <div class="mockup-bar-fill" data-width="92%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+
+  <!-- PAGE: TRAINING PATH -->
+  <div class="page" id="page-path">
+    <section class="section">
+      <div class="section-header anim-in">
+        <div class="section-label">Structured Training</div>
+        <h2 class="section-title">Real-World Cyber Awareness Path</h2>
+
+        <p class="section-desc">
+          Learn the warning signs first, experience realistic attack situations, make decisions under pressure,
+          then review exactly what you missed and how to improve.
+        </p>
+      </div>
+
+      <div class="path-shell">
+        <div class="difficulty-panel anim-in">
+          <h3>Choose Scenario Difficulty</h3>
+
+          <p>
+            Difficulty changes more than the timer. Guided mode gives clearer clues, Challenge mode makes the threats
+            more realistic, and Expert mode uses subtle AI-written, deepfake, OAuth, MFA, and social engineering traps.
+          </p>
+
+          <div class="difficulty-options">
+            <button class="difficulty-btn active" data-difficulty="easy" onclick="setDifficulty('easy')">
+              Guided<br>
+              <span style="font-size:0.68rem; color:var(--text-tertiary); font-weight:600;">Clear clues</span>
+            </button>
+
+            <button class="difficulty-btn" data-difficulty="hard" onclick="setDifficulty('hard')">
+              Challenge<br>
+              <span style="font-size:0.68rem; color:var(--text-tertiary); font-weight:600;">Realistic traps</span>
+            </button>
+
+            <button class="difficulty-btn" data-difficulty="expert" onclick="setDifficulty('expert')">
+              Expert<br>
+              <span style="font-size:0.68rem; color:var(--text-tertiary); font-weight:600;">Subtle modern threats</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="path-grid">
+          <div class="path-card anim-in" id="path-phishing" onclick="openLearningModule('phishing')" tabindex="0"
+            role="button" onkeydown="handleKeyboardCard(event, () => openLearningModule('phishing'))">
+            <div class="path-step-num">01</div>
+            <div>
+              <h3>🎣 Phishing, AI-Written Scams & OAuth Traps</h3>
+              <p>
+                Learn how attackers use fake domains, AI-written messages, realistic supplier requests,
+                fake login pages, and OAuth consent tricks to steal access.
+              </p>
+            </div>
+            <div class="path-status">Start</div>
+          </div>
+
+          <div class="path-card anim-in" id="path-bruteforce" onclick="openLearningModule('bruteforce')" tabindex="0"
+            role="button" onkeydown="handleKeyboardCard(event, () => openLearningModule('bruteforce'))">
+            <div class="path-step-num">02</div>
+            <div>
+              <h3>🔐 Credential Attacks, MFA Fatigue & Account Takeover</h3>
+              <p>
+                Understand brute force, credential stuffing, password spraying, reused passwords,
+                suspicious login behaviour, impossible travel, and MFA fatigue attacks.
+              </p>
+            </div>
+            <div class="path-status">Start</div>
+          </div>
+
+          <div class="path-card anim-in" id="path-sqli" onclick="openLearningModule('sqli')" tabindex="0" role="button"
+            onkeydown="handleKeyboardCard(event, () => openLearningModule('sqli'))">
+            <div class="path-step-num">03</div>
+            <div>
+              <h3>💉 Web Exploits, Unsafe Input & Data Exposure</h3>
+              <p>
+                Learn how unsafe input handling, SQL injection, delayed backend behaviour,
+                database errors, and weak data protection can expose sensitive records.
+              </p>
+            </div>
+            <div class="path-status">Start</div>
+          </div>
+
+          <div class="path-card anim-in" id="path-social" onclick="openLearningModule('social')" tabindex="0"
+            role="button" onkeydown="handleKeyboardCard(event, () => openLearningModule('social'))">
+            <div class="path-step-num">04</div>
+            <div>
+              <h3>🎭 Social Engineering, Deepfakes & Human Risk</h3>
+              <p>
+                Learn how attackers use trust, urgency, authority, helpfulness, voice cloning,
+                fake executives, and process-bypass requests to manipulate people.
+              </p>
+            </div>
+            <div class="path-status">Start</div>
+          </div>
+
+          <div class="path-card anim-in locked" id="path-final" onclick="startFinalAssessment()" tabindex="0"
+            role="button" onkeydown="handleKeyboardCard(event, startFinalAssessment)">
+            <div class="path-step-num">05</div>
+            <div>
+              <h3>🏁 Final Mixed Assessment</h3>
+              <p>Pass a mixed challenge across all attack types. You need 75% or higher to unlock your certificate.</p>
+            </div>
+            <div class="path-status">Locked</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+
+  <!-- PAGE: LEARNING HUB -->
+  <div class="page" id="page-learn">
+    <section class="section">
+      <div class="learning-shell">
+
+        <div class="learning-hero anim-in">
+          <div class="learning-main-card">
+            <div class="learning-module-pill">
+              <span class="badge-dot"></span>
+              Learn before you decide
+            </div>
+
+            <h2 id="learnTitle">Phishing Recognition</h2>
+
+            <p id="learnIntro">
+              Learn how this attack works, what the attacker is trying to do, and which clues matter before answering
+              challenge questions.
+            </p>
+
+            <div class="learning-actions">
+              <button class="btn-primary" id="learnStartBtn" onclick="startLearningSimulation()">
+                Start Simulation
+              </button>
+
+              <button class="btn-secondary" onclick="navigateTo('path')">
+                Back to Training Path
+              </button>
+            </div>
+          </div>
+
+          <div class="learning-visual-card">
+            <div class="attack-flow-visual" id="learnFlowVisual">
+              <!-- JS inserts visual flow here -->
+            </div>
+          </div>
+        </div>
+
+        <div class="learning-grid">
+          <div class="learning-side-panel anim-in">
+            <div class="learning-tabs">
+
+              <div class="learning-tab active" data-learn-tab="phishing" onclick="renderLearningModule('phishing')">
+                <div class="learning-tab-icon">🎣</div>
+                <div>
+                  <h3>Phishing & AI Threats</h3>
+                  <p>Fake messages, fake domains, AI-written attacks.</p>
+                </div>
+              </div>
+
+              <div class="learning-tab" data-learn-tab="bruteforce" onclick="renderLearningModule('bruteforce')">
+                <div class="learning-tab-icon">🔓</div>
+                <div>
+                  <h3>Credential Attacks</h3>
+                  <p>Brute force, spraying, stuffing, MFA fatigue.</p>
+                </div>
+              </div>
+
+              <div class="learning-tab" data-learn-tab="sqli" onclick="renderLearningModule('sqli')">
+                <div class="learning-tab-icon">💉</div>
+                <div>
+                  <h3>Web Exploits & Data</h3>
+                  <p>SQL injection, unsafe input, exposed records.</p>
+                </div>
+              </div>
+
+              <div class="learning-tab" data-learn-tab="social" onclick="renderLearningModule('social')">
+                <div class="learning-tab-icon">🎭</div>
+                <div>
+                  <h3>Social Engineering & Risk</h3>
+                  <p>Trust, urgency, authority, and manipulation.</p>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="mission-brief-card">
+              <div class="mission-brief-glow"></div>
+
+              <div class="mission-brief-header">
+                <div>
+                  <span class="mission-kicker">Mission Brief</span>
+                  <h3 id="briefTitle">Phishing Recognition</h3>
+                </div>
+
+                <div class="mission-level" id="briefLevel">Core Skill</div>
+              </div>
+
+              <p class="mission-summary" id="briefSummary">
+                Before starting, learn what the attacker wants, what clues matter, and how to verify the threat.
+              </p>
+
+              <div class="brief-skill-box">
+                <div class="brief-skill-icon" id="briefSkillIcon">🎯</div>
+                <div>
+                  <strong id="briefSkillTitle">Skill being trained</strong>
+                  <span id="briefSkillText">Spot fake messages by checking the sender, link, and request.</span>
+                </div>
+              </div>
+
+              <div class="brief-checklist">
+                <div class="brief-checklist-title">Watch for</div>
+
+                <div id="briefChecklist">
+                  <div class="brief-check-item">
+                    <div class="brief-check-mark">!</div>
+                    <div>
+                      <strong>Domain mismatch</strong>
+                      <span>Lookalike domains, typos, or strange subdomains.</span>
+                    </div>
+                  </div>
+
+                  <div class="brief-check-item">
+                    <div class="brief-check-mark">!</div>
+                    <div>
+                      <strong>Urgency pressure</strong>
+                      <span>Messages that push you to act before thinking.</span>
+                    </div>
+                  </div>
+
+                  <div class="brief-check-item">
+                    <div class="brief-check-mark">!</div>
+                    <div>
+                      <strong>Fake destination</strong>
+                      <span>Links that do not go where they appear to go.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="brief-rule-card">
+                <span>Defender rule</span>
+                <strong id="briefRule">Verify the destination before trusting the design.</strong>
+              </div>
+
+              <div class="brief-progress-card">
+                <div class="brief-progress-top">
+                  <span>Readiness</span>
+                  <strong id="briefReadiness">86%</strong>
+                </div>
+
+                <div class="brief-progress-bar">
+                  <div class="brief-progress-fill" id="briefReadinessFill" style="width:86%;"></div>
+                </div>
+
+                <p id="briefReadinessText">
+                  You are learning the exact clues that appear in the phishing challenge.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="learning-content-card anim-in">
+
+
+            <h3 id="learnModuleName">🎣 Phishing Recognition</h3>
+
+            <p id="learnModuleDesc">
+              This page prepares you for the exact decision-making style used in the simulation.
+            </p>
+
+            <div class="sim-prep-grid" id="learnPrepGrid">
+              <!-- JS inserts simulation prep cards -->
+            </div>
+
+            <div class="learning-mini-grid">
+              <div class="learning-mini-card">
+                <h4>Attacker Goal</h4>
+                <p id="learnGoal">Steal credentials or trick the user into opening a malicious link.</p>
+              </div>
+
+              <div class="learning-mini-card">
+                <h4>How It Works</h4>
+                <p id="learnHow">The attacker copies trusted branding, creates pressure, and hides the real destination.
+                </p>
+              </div>
+
+              <div class="learning-mini-card">
+                <h4>Defender Mindset</h4>
+                <p id="learnMindset">Do not ask “does it look real?” Ask “can I verify this safely?”</p>
+              </div>
+
+              <div class="learning-mini-card">
+                <h4>Common Trap</h4>
+                <p id="learnTrap">Professional design can make a malicious request feel safe.</p>
+              </div>
+            </div>
+
+            <div class="decision-training-box">
+              <div class="decision-training-top">
+                <h4>How to answer the simulation</h4>
+                <span>Safe / Suspicious / Need More Info</span>
+              </div>
+
+              <div class="decision-rule-list" id="learnDecisionRules">
+                <!-- JS inserts decision rules -->
+              </div>
+            </div>
+
+            <div class="clue-comparison-grid">
+              <div class="clue-comparison-card safe">
+                <h4 class="safe-word">✓ What safe can look like</h4>
+                <p id="learnSafeExample">A normal internal message using the correct process.</p>
+              </div>
+
+              <div class="clue-comparison-card danger">
+                <h4 class="danger-word">⚠ What suspicious can look like</h4>
+                <p id="learnDangerExample">A polished message hiding a risky request.</p>
+              </div>
+            </div>
+
+            <div class="signal-strip" id="learnSignals">
+              <!-- JS inserts warning signals -->
+            </div>
+
+            <div class="learning-demo">
+              <div class="learning-demo-top">
+                <h4 id="learnDemoTitle">Visual example</h4>
+                <span class="demo-badge" id="learnDemoBadge">Watch the clue</span>
+              </div>
+
+              <div class="demo-message" id="learnDemoMessage">
+                Loading example...
+              </div>
+            </div>
+
+            <div class="learning-footer-actions">
+              <button class="btn-primary" onclick="startLearningSimulation()">
+                I understand this — start simulation
+              </button>
+
+              <button class="btn-secondary" onclick="navigateTo('attacks')">
+                Choose another simulation
+              </button>
+            </div>
+
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+
+  <!-- PAGE: ATTACKS / SIMULATIONS -->
+  <div class="page" id="page-attacks">
+    <section class="section">
+      <div class="section-header anim-in">
+        <div class="section-label">Attack Simulations</div>
+        <h2 class="section-title">Choose a Cyber Attack Scenario</h2>
+        <p class="section-desc">
+          Learn the content first, then step through realistic attack stages and test your decision-making.
+        </p>
+      </div>
+
+      <div class="attacks-grid">
+
+
+        <div class="attack-card anim-in" tabindex="0" role="button" onclick="openLearningModule('phishing')"
+          style="transition-delay:0.1s">
+          <div class="attack-icon">🎣</div>
+          <h3>Phishing, AI Scams & OAuth Traps</h3>
+          <p>
+            Analyse polished emails, fake login pages, lookalike domains, AI-written messages,
+            supplier scams, and dangerous app permission requests.
+          </p>
+          <div class="card-meta">
+            <span class="card-tag tag-high">High Risk</span>
+            <span style="font-size:0.75rem; color:var(--text-tertiary)">5 stages</span>
+          </div>
+        </div>
+
+        <div class="attack-card anim-in" tabindex="0" role="button" onclick="openLearningModule('bruteforce')"
+          style="transition-delay:0.2s">
+          <div class="attack-icon">🔓</div>
+          <h3>Credential Attacks & MFA Fatigue</h3>
+          <p>
+            Detect brute force, password spraying, credential stuffing, impossible travel,
+            reused passwords, MFA push fatigue, and account takeover behaviour.
+          </p>
+          <div class="card-meta">
+            <span class="card-tag tag-medium">Medium Risk</span>
+            <span style="font-size:0.75rem; color:var(--text-tertiary)">4 stages</span>
+          </div>
+        </div>
+
+        <div class="attack-card anim-in" tabindex="0" role="button" onclick="openLearningModule('sqli')"
+          style="transition-delay:0.3s">
+          <div class="attack-icon">💉</div>
+          <h3>Web Exploits & Data Exposure</h3>
+          <p>
+            Spot suspicious input, SQL-like patterns, database errors, delayed injection signs,
+            unsafe backend behaviour, and possible data exposure.
+          </p>
+          <div class="card-meta">
+            <span class="card-tag tag-high">High Risk</span>
+            <span style="font-size:0.75rem; color:var(--text-tertiary)">5 stages</span>
+          </div>
+        </div>
+
+        <div class="attack-card anim-in" tabindex="0" role="button" onclick="openLearningModule('social')"
+          style="transition-delay:0.4s">
+          <div class="attack-icon">🎭</div>
+          <h3>Social Engineering & Deepfake Risk</h3>
+          <p>
+            Recognise fake authority, voice-cloning pressure, contractor tailgating, payment scams,
+            secrecy tactics, and process-bypass manipulation.
+          </p>
+          <div class="card-meta">
+            <span class="card-tag tag-medium">Medium Risk</span>
+            <span style="font-size:0.75rem; color:var(--text-tertiary)">4 stages</span>
+          </div>
+        </div>
+
+
+
+      </div>
+    </section>
+  </div>
+
+  <!-- PAGE: SIMULATION -->
+  <div class="page" id="page-simulation">
+    <section class="section">
+      <div class="sim-container">
+        <div class="sim-header">
+          <button class="sim-back" onclick="navigateTo('attacks')">← Back to simulations</button>
+
+          <div class="stage-indicator">
+            <span class="stage-dot"></span>
+            <span id="stageText">Stage 1 of 5: Reconnaissance</span>
+          </div>
+
+          <div class="perspective-toggle">
+            <button class="perspective-btn active" id="attackerView" onclick="setPerspective('attacker')">⚔
+              Attacker</button>
+            <button class="perspective-btn" id="defenderView" onclick="setPerspective('defender')">🛡 Defender</button>
+          </div>
+        </div>
+
+        <div class="sim-split">
+          <div class="timeline-panel">
+            <h3>⚡ Attack Timeline</h3>
+            <div class="timeline" id="timeline">
+              <div class="timeline-line-progress" id="timelineProgress"></div>
+            </div>
+          </div>
+
+          <div class="defence-panel" id="defencePanel">
+            <h3>🛡 Defence Measures</h3>
+            <div id="defenceCards"></div>
+          </div>
+        </div>
+
+        <div class="sim-controls">
+          <button class="sim-btn" id="prevStepBtn" onclick="prevStep()">← Previous</button>
+
+          <button class="sim-btn primary-sim" id="nextStepBtn" onclick="nextStep()">Next Step →</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- PAGE: SCENARIO -->
+  <div class="page" id="page-scenario">
+    <section class="section">
+      <div class="section-header">
+        <div class="section-label">Interactive Challenge</div>
+        <h2 class="section-title" id="scenarioTitle">Can You Spot the Threat?</h2>
+        <p class="section-desc" id="scenarioDesc">Analyze the situation and choose the safest response.</p>
+      </div>
+
+      <div class="scenario-section">
+        <div class="email-mockup" id="emailMockup">
+          <div id="cluePanel" style="display:none; margin:20px 24px 0;">
+            <div class="dash-card">
+              <h4>🔍 Investigation Clues</h4>
+              <div id="clueContent" style="font-size:0.85rem; color:var(--text-secondary); line-height:1.6;"></div>
+            </div>
+          </div>
+
+          <div class="email-header">
+            <div class="email-from">
+              <div class="email-avatar" id="scenarioAvatar">👤</div>
+
+              <div class="email-from-info">
+                <h4 id="scenarioSender">Sender</h4>
+                <span id="scenarioSenderMeta">sender@example.com</span>
+              </div>
+            </div>
+
+            <span id="scenarioTime" style="font-size:0.75rem; color:var(--text-tertiary)">Today</span>
+          </div>
+
+          <div class="email-body">
+            <h3 id="scenarioMessageTitle">Scenario title</h3>
+            <div id="scenarioMessageBody"></div>
+          </div>
+        </div>
+
+        <div id="timer" style="text-align:center; margin-top:10px; font-size:0.9rem; color:#aaa;"></div>
+
+
+        <div class="confidence-panel">
+          <h4>How confident are you?</h4>
+          <div class="confidence-options">
+            <button class="confidence-btn" data-confidence="low" onclick="setConfidence('low')">Low confidence</button>
+            <button class="confidence-btn active" data-confidence="medium" onclick="setConfidence('medium')">Medium
+              confidence</button>
+            <button class="confidence-btn" data-confidence="high" onclick="setConfidence('high')">High
+              confidence</button>
+          </div>
+        </div>
+
+        <div class="scenario-actions">
+          <button class="scenario-btn btn-safe" onclick="scenarioAnswer('safe')">✓ Safe</button>
+          <button class="scenario-btn btn-suspicious" onclick="scenarioAnswer('suspicious')">⚠ Suspicious</button>
+          <button class="scenario-btn" onclick="scenarioAnswer('unsure')">🤔 Need More Info</button>
+        </div>
+
+
+
+        <div class="scenario-feedback" id="scenarioFeedback"></div>
+
+        <div id="nextQuestionContainer" style="text-align:center; margin-top:20px; display:none;">
+          <button class="btn-primary" onclick="nextChallenge()">Next Question →</button>
+        </div>
+
+        <div class="ai-trigger" id="aiTrigger" style="display:none">
+          <button class="sim-btn primary-sim" onclick="showAIPanel()">🤖 Explain This Scenario</button>
+        </div>
+
+        <div class="ai-panel" id="aiPanel">
+          <h3>🤖 AI Analysis</h3>
+
+          <div class="ai-section">
+            <h4>What happened</h4>
+            <p id="aiWhat"></p>
+          </div>
+
+          <div class="ai-section">
+            <h4>Attacker's strategy</h4>
+            <p id="aiHow"></p>
+          </div>
+
+          <div class="ai-section">
+            <h4>How to defend</h4>
+            <p id="aiDefend"></p>
+          </div>
+        </div>
+
+        <div class="takeaways" id="takeaways" style="display:none">
+          <h3 style="text-align:center; margin-bottom:20px; font-size:1.1rem;">🎯 Key Takeaways</h3>
+          <div id="takeawayList"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <!-- PAGE: DASHBOARD -->
+  <div class="page" id="page-dashboard">
+    <section class="section">
+      <div class="section-header anim-in">
+        <div class="section-label">Your Progress</div>
+        <h2 class="section-title">Security Dashboard</h2>
+        <p class="section-desc">Track your performance, mistakes, awareness level, certificate status, and what to
+          improve next.</p>
+      </div>
+
+      <div class="dashboard-shell">
+
+        <!-- HERO SUMMARY -->
+        <div class="dashboard-hero anim-in">
+          <div class="dashboard-hero-content">
+            <div class="dashboard-status-pill">
+              <span class="badge-dot"></span>
+              Live learning profile
+            </div>
+
+            <h3 id="dashHeroTitle">Your cyber awareness profile is being built.</h3>
+
+            <p id="dashHeroText">
+              Complete simulations and answer challenge questions. ThreatScope will analyse your decisions, mistakes,
+              and progress to show exactly what to improve next.
+            </p>
+
+            <div class="mini-stat-grid">
+              <div class="mini-stat">
+                <div class="mini-stat-value" id="currentStreak">0</div>
+                <div class="mini-stat-label">Current Streak</div>
+              </div>
+
+              <div class="mini-stat">
+                <div class="mini-stat-value" id="bestStreak">0</div>
+                <div class="mini-stat-label">Best Streak</div>
+              </div>
+
+              <div class="mini-stat">
+                <div class="mini-stat-value" id="finalAssessmentScore">—</div>
+                <div class="mini-stat-label">Final Assessment</div>
+              </div>
+            </div>
+
+            <div class="quick-actions">
+              <button class="quick-action-btn" onclick="openLearningModule(getWeakestTopic()?.topic || 'phishing')">⚡
+                Continue Training</button>
+              <button class="quick-action-btn" onclick="scrollToMistakes()">🔍 Review Mistakes</button>
+            </div>
+          </div>
+
+          <div class="dashboard-hero-score">
+            <div class="dashboard-score-big"><span id="dashHeroScore">0</span>%</div>
+            <div class="dashboard-score-label">Awareness Score</div>
+          </div>
+        </div>
+
+        <!-- MAIN DASHBOARD GRID -->
+        <div class="dashboard-grid upgraded">
+
+          <!-- LEFT STACK -->
+          <div class="dashboard-side-stack">
+
+            <!-- Awareness Score -->
+            <div class="dash-card anim-in">
+              <h4>Awareness Score</h4>
+
+              <div class="circular-progress">
+                <svg width="120" height="120">
+                  <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8"></circle>
+
+                  <circle cx="60" cy="60" r="52" fill="none" stroke-width="8" stroke-linecap="round"
+                    stroke-dasharray="327" stroke-dashoffset="327" class="progress-ring"></circle>
+                </svg>
+
+                <div class="progress-value">
+                  <span id="awarenessScore">0</span>%
+                </div>
+              </div>
+            </div>
+
+            <!-- Risk -->
+            <div class="dash-card anim-in">
+              <h4>Current Risk Level</h4>
+
+              <div class="dash-value" id="riskLevel">Not Assessed</div>
+
+              <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="riskBar"></div>
+              </div>
+
+              <p id="riskExplanation">
+                Your risk level changes based on accuracy, missed signals, and repeated mistake patterns.
+              </p>
+            </div>
+
+            <!-- Completed -->
+            <div class="dash-card anim-in">
+              <h4>Simulations Completed</h4>
+
+              <div class="dash-value">
+                <span id="simCompleted">0</span>
+                <span class="dash-total"> / 4</span>
+              </div>
+
+              <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="simBar"></div>
+              </div>
+            </div>
+
+            <!-- Behaviour Pattern -->
+            <div class="behaviour-pattern-card anim-in">
+              <div class="behaviour-pattern-top">
+                <div>
+                  <span class="behaviour-pattern-kicker">Attack Pattern Detected</span>
+                  <h3>Behavioural weak point</h3>
+                </div>
+
+                <div class="behaviour-pattern-status" id="behaviourPatternStatus">
+                  Waiting
+                </div>
+              </div>
+
+              <div class="behaviour-main-signal">
+                <div class="behaviour-main-label">Most vulnerable trigger</div>
+                <div class="behaviour-main-value" id="behaviourMainValue">Not enough data</div>
+                <p class="behaviour-main-desc" id="behaviourMainDesc">
+                  Complete more challenge questions so ThreatScope can detect what kind of manipulation affects your
+                  decisions.
+                </p>
+              </div>
+
+              <div class="behaviour-trigger-grid" id="behaviourTriggerGrid">
+                <div class="behaviour-trigger-row">
+                  <div class="behaviour-trigger-name">Urgency</div>
+                  <div class="behaviour-trigger-bar">
+                    <div class="behaviour-trigger-fill" style="width:0%"></div>
+                  </div>
+                  <div class="behaviour-trigger-count">0</div>
+                </div>
+
+                <div class="behaviour-trigger-row">
+                  <div class="behaviour-trigger-name">Authority</div>
+                  <div class="behaviour-trigger-bar">
+                    <div class="behaviour-trigger-fill" style="width:0%"></div>
+                  </div>
+                  <div class="behaviour-trigger-count">0</div>
+                </div>
+
+                <div class="behaviour-trigger-row">
+                  <div class="behaviour-trigger-name">Technical</div>
+                  <div class="behaviour-trigger-bar">
+                    <div class="behaviour-trigger-fill" style="width:0%"></div>
+                  </div>
+                  <div class="behaviour-trigger-count">0</div>
+                </div>
+              </div>
+
+              <div class="behaviour-rule" id="behaviourRule">
+                <strong>Defender rule:</strong> Do not judge the scenario by how professional it looks. Verify the
+                request, source, and behaviour.
+              </div>
+
+              <button class="behaviour-action-btn" id="behaviourActionBtn"
+                onclick="openLearningModule(getBehaviourFocusTopic())">
+                Start Pattern Drill
+              </button>
+            </div>
+
+            <!-- Badges -->
+            <div class="dash-card anim-in">
+              <h4>Achievement Badges</h4>
+
+              <div class="badges-container">
+
+                <div class="badge locked" id="badge-phishing">
+                  <div class="badge-icon">🎣</div>
+                  <div class="badge-copy">
+                    <div class="badge-title">Phishing Aware</div>
+                    <div class="badge-desc">Complete the phishing simulation</div>
+                  </div>
+                  <span class="badge-status">Locked</span>
+                </div>
+
+                <div class="badge locked" id="badge-bruteforce">
+                  <div class="badge-icon">🔓</div>
+                  <div class="badge-copy">
+                    <div class="badge-title">Brute Force Expert</div>
+                    <div class="badge-desc">Complete the brute force simulation</div>
+                  </div>
+                  <span class="badge-status">Locked</span>
+                </div>
+
+                <div class="badge locked" id="badge-sqli">
+                  <div class="badge-icon">💉</div>
+                  <div class="badge-copy">
+                    <div class="badge-title">Injection Hunter</div>
+                    <div class="badge-desc">Complete the SQL injection simulation</div>
+                  </div>
+                  <span class="badge-status">Locked</span>
+                </div>
+
+                <div class="badge locked" id="badge-social">
+                  <div class="badge-icon">🎭</div>
+                  <div class="badge-copy">
+                    <div class="badge-title">Social Engineer</div>
+                    <div class="badge-desc">Complete the social engineering simulation</div>
+                  </div>
+                  <span class="badge-status">Locked</span>
+                </div>
+
+                <div class="badge locked champion-badge" id="badge-champion">
+                  <div class="badge-icon">🛡</div>
+                  <div class="badge-copy">
+                    <div class="badge-title">Security Champion</div>
+                    <div class="badge-desc">Complete all modules and pass the final assessment</div>
+                  </div>
+                  <span class="badge-status">Locked</span>
+                </div>
+
+              </div>
+            </div>
+
+            <button class="reset-progress-btn" onclick="resetProgress()">
+              Reset Training Progress
+            </button>
+
+          </div>
+
+          <!-- RIGHT STACK -->
+          <div class="dashboard-main-stack">
+
+            <!-- Final Assessment -->
+            <div class="final-assessment-card anim-in">
+              <div class="final-assessment-top">
+                <div>
+                  <h3>🏁 Final Assessment</h3>
+                  <p id="finalAssessmentText">
+                    Complete all 4 modules, then pass the final mixed assessment with at least 75% to unlock your
+                    certificate.
+                  </p>
+                </div>
+
+                <div class="assessment-status-pill" id="assessmentStatusPill">
+                  Locked
+                </div>
+              </div>
+
+              <div class="assessment-actions">
+                <button class="btn-primary" id="finalAssessmentBtn" onclick="startFinalAssessment()">
+                  Start Final Assessment
+                </button>
+
+                <button class="btn-secondary" id="claimCertificateBtn" onclick="openCertificateClaim()"
+                  style="display:none;">
+                  🏆 Claim Certificate
+                </button>
+              </div>
+            </div>
+
+            <!-- Certificate Card -->
+            <div class="certificate-dashboard-card locked anim-in" id="certificateDashboardCard">
+              <div class="certificate-glow"></div>
+
+              <div class="certificate-dashboard-top">
+                <div class="certificate-dashboard-title">
+                  <div class="certificate-dashboard-icon">🏆</div>
+
+                  <div>
+                    <h3 id="certificateCardTitle">Certificate Locked</h3>
+                    <p id="certificateCardText">
+                      Complete all modules and pass the final assessment to unlock your personalised certificate.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="certificate-dashboard-status" id="certificateCardStatus">
+                  Locked
+                </div>
+              </div>
+
+              <div class="certificate-dashboard-preview">
+                <div class="cert-preview-brand">ThreatScope Certificate</div>
+
+                <div class="cert-preview-name" id="certificatePreviewName">
+                  Not unlocked yet
+                </div>
+
+                <div class="cert-preview-meta">
+                  <span class="cert-preview-chip" id="certificatePreviewScore">Final Score: —</span>
+                  <span class="cert-preview-chip" id="certificatePreviewDate">Date: —</span>
+                  <span class="cert-preview-chip" id="certificatePreviewID">ID: —</span>
+                </div>
+              </div>
+
+              <div class="certificate-dashboard-actions">
+                <button class="cert-action-primary" id="dashCertificateActionBtn"
+                  onclick="handleDashboardCertificateAction()">
+                  Complete Training First
+                </button>
+
+                <button class="cert-action-secondary" id="dashCertificateDownloadBtn" onclick="downloadCertificate()"
+                  disabled>
+                  Download PNG
+                </button>
+              </div>
+            </div>
+
+            <!-- AI Analyst -->
+            <div class="ai-analyst-card anim-in">
+              <div class="ai-analyst-header">
+                <div class="ai-analyst-title">
+                  <div class="ai-orb">🤖</div>
+
+                  <div>
+                    <h3>Adaptive Security Analyst</h3>
+                    <span>Uses your answers, mistakes, and topic scores to build a personalised learning path.</span>
+
+                  </div>
+                </div>
+
+                <div class="ai-confidence" id="aiConfidence">Waiting for data</div>
+              </div>
+
+              <div class="ai-summary-box">
+                <h4>Performance Diagnosis</h4>
+                <p id="aiDashboardSummary">
+                  Complete some challenge questions first. Once you make mistakes, ThreatScope will identify patterns
+                  and show what you need to improve.
+                </p>
+              </div>
+
+              <div class="ai-summary-box">
+                <h4>What you should learn next</h4>
+
+                <div class="ai-learning-list" id="aiLearningList">
+                  <div class="empty-state">
+                    No weaknesses detected yet. Start a simulation to build your learning profile.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Topic Performance -->
+            <div class="dash-card anim-in">
+              <h4>Topic Performance</h4>
+
+              <div class="topic-performance">
+
+                <div class="topic-row">
+                  <div class="topic-row-top">
+                    <div class="topic-name">🎣 Phishing & AI Threats</div>
+                    <div class="topic-score" id="topicScore-phishing">0 / 0</div>
+                  </div>
+                  <div class="topic-mini-bar">
+                    <div class="topic-mini-fill" id="topicFill-phishing"></div>
+                  </div>
+                </div>
+
+                <div class="topic-row">
+                  <div class="topic-row-top">
+                    <div class="topic-name">🔓 Credential Attacks</div>
+                    <div class="topic-score" id="topicScore-bruteforce">0 / 0</div>
+                  </div>
+                  <div class="topic-mini-bar">
+                    <div class="topic-mini-fill" id="topicFill-bruteforce"></div>
+                  </div>
+                </div>
+
+                <div class="topic-row">
+                  <div class="topic-row-top">
+                    <div class="topic-name">💉 Web Exploits & Data</div>
+                    <div class="topic-score" id="topicScore-sqli">0 / 0</div>
+                  </div>
+                  <div class="topic-mini-bar">
+                    <div class="topic-mini-fill" id="topicFill-sqli"></div>
+                  </div>
+                </div>
+
+                <div class="topic-row">
+                  <div class="topic-row-top">
+                    <div class="topic-name">🎭 Social Engineering & Risk</div>
+                    <div class="topic-score" id="topicScore-social">0 / 0</div>
+                  </div>
+                  <div class="topic-mini-bar">
+                    <div class="topic-mini-fill" id="topicFill-social"></div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Mistake Log -->
+            <div class="dash-card anim-in" id="mistakeReviewCard">
+              <h4>Wrong Answer Review</h4>
+
+              <div class="mistake-log" id="mistakeLog">
+                <div class="empty-state">
+                  No wrong answers yet. When you miss a question, it will appear here with the reason and topic.
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+  <!-- Recommended next -->
+  <div class="page" id="page-recommended">
+    <section class="section">
+      <div style="max-width:1200px; margin:48px auto 0;">
+        <h3 class="anim-in" style="font-size:1.1rem; margin-bottom:20px;">Recommended Next</h3>
+
+        <div class="attacks-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+          <div class="attack-card anim-in" onclick="startSimulation('bruteforce')" style="transition-delay:0.1s">
+            <div class="attack-icon" style="background:rgba(245,158,11,0.15);">🔓</div>
+            <h3>Brute Force</h3>
+            <p>Based on your results, understanding authentication attacks is your next best step.</p>
+            <div class="card-meta"><span class="card-tag tag-medium">Recommended</span></div>
+          </div>
+
+          <div class="attack-card anim-in" onclick="startSimulation('sqli')" style="transition-delay:0.2s">
+            <div class="attack-icon" style="background:rgba(59,130,246,0.15);">💉</div>
+            <h3>SQL Injection</h3>
+            <p>Advance your skills with database exploitation techniques.</p>
+            <div class="card-meta"><span class="card-tag tag-high">Advanced</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- PAGE: POST-SIMULATION REPORT -->
+  <div class="page" id="page-report">
+    <section class="section">
+      <div class="section-header anim-in">
+        <div class="section-label">Simulation Complete</div>
+        <h2 class="section-title">Attack Chain Analysis</h2>
+        <p class="section-desc">Full breakdown of the attack path and your response.</p>
+      </div>
+
+      <!-- Attack chain visualization -->
+      <div class="attack-chain" id="attackChain">
+        <div class="chain-node">🔎 Identify<br><small style="color:var(--text-tertiary)">Weakness Found</small></div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node">⚠ Test<br><small style="color:var(--text-tertiary)">Risk Signal</small></div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node">🧠 Decision<br><small style="color:var(--text-tertiary)">User Response</small></div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node" style="border-color:rgba(239,68,68,0.3);">🛡 Defence<br><small
+            style="color:#ef4444">Prevention Step</small></div>
+      </div>
+
+      <!-- Insight report -->
+      <div class="insight-report">
+        <div class="insight-card anim-in" onclick="toggleInsight(this)">
+          <div class="insight-header">
+            <h4>❌ What went wrong</h4>
+            <span class="chevron">▼</span>
+          </div>
+          <div class="insight-body">
+            <p>The attack succeeded because the victim trusted the email sender without verifying the domain. The
+              urgency of "24-hour expiration" bypassed normal security reasoning, and the professional email formatting
+              created a false sense of legitimacy. The credential harvesting page was a pixel-perfect clone of the real
+              login portal.</p>
+          </div>
+        </div>
+        <div class="insight-card anim-in" onclick="toggleInsight(this)" style="transition-delay:0.1s">
+          <div class="insight-header">
+            <h4>⚔ How the attacker succeeded</h4>
+            <span class="chevron">▼</span>
+          </div>
+          <div class="insight-body">
+            <p>The attacker used typosquatting (c0mpany vs company), emotional manipulation through urgency, and
+              authority impersonation by posing as the IT department. The attack infrastructure included a cloned login
+              page with SSL certificate and a real-time credential relay to access the victim's account within seconds
+              of submission.</p>
+          </div>
+        </div>
+        <div class="insight-card anim-in" onclick="toggleInsight(this)" style="transition-delay:0.2s">
+          <div class="insight-header">
+            <h4>🛡 How to prevent it</h4>
+            <span class="chevron">▼</span>
+          </div>
+          <div class="insight-body">
+            <p>Deploy DMARC/DKIM/SPF email authentication. Implement multi-factor authentication (MFA) on all accounts.
+              Train employees to verify URLs through hover inspection. Establish a direct channel to IT for suspicious
+              email reporting. Use hardware security keys for critical system access.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="report-actions">
+        <button class="btn-primary" onclick="navigateTo('dashboard')">View Dashboard</button>
+        <button class="btn-secondary" onclick="navigateTo('attacks')">Try Another</button>
+      </div>
+
+      <!-- Certificate CTA on report page -->
+      <div id="reportCertBanner"
+        style="display:none; margin-top:40px; padding:28px 32px; background:linear-gradient(135deg,rgba(192,132,252,0.12),rgba(245,158,11,0.08)); border:1px solid rgba(192,132,252,0.3); border-radius:20px; text-align:center;">
+        <div style="font-size:2rem; margin-bottom:8px;">🏆</div>
+
+        <h3 style="font-family:'Space Grotesk',sans-serif; font-size:1.3rem; margin-bottom:8px;">
+          Certificate Unlocked!
+        </h3>
+
+        <p style="color:rgba(241,241,245,0.6); font-size:0.9rem; margin-bottom:20px;">
+          You completed all 4 simulations and passed the final assessment. Enter your name to prepare your certificate.
+        </p>
+
+        <button class="btn-primary" onclick="openCertificateClaim()">
+          Claim Certificate
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <!-- PAGE: CERTIFICATE VERIFICATION -->
+  <div class="page" id="page-verify">
+    <section class="section">
+      <div class="section-header anim-in">
+        <div class="section-label">Certificate Verification</div>
+        <h2 class="section-title">Verify a ThreatScope Certificate</h2>
+        <p class="section-desc">
+          Enter a certificate ID to check whether the certificate is valid and was issued by ThreatScope.
+        </p>
+      </div>
+
+      <div style="max-width:720px; margin:0 auto;">
+        <div class="dash-card anim-in" style="text-align:center;">
+          <h4>Certificate ID</h4>
+
+          <input id="verifyCertificateInput" type="text" placeholder="Example: TS-2026-ABC123"
+            style="width:100%; padding:15px 16px; border-radius:14px; border:1px solid rgba(255,255,255,0.16); background:rgba(0,0,0,0.35); color:white; font-size:1rem; margin:14px 0 18px; text-align:center; font-family:'Inter',sans-serif; outline:none;">
+
+          <button class="btn-primary" onclick="verifyCertificateByID()">
+            Verify Certificate
+          </button>
+
+          <div id="verifyCertificateResult" style="margin-top:24px;"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- CERTIFICATE OVERLAY -->
+  <div id="certificateOverlay"
+    style="display:none; position:fixed; inset:0; background:rgba(5,5,16,0.95); z-index:9000; overflow-y:auto; padding:40px 20px;">
+    <div style="max-width:900px; margin:0 auto;">
+
+      <!-- Close button -->
+      <div style="text-align:right; margin-bottom:16px;">
+        <button onclick="document.getElementById('certificateOverlay').style.display='none'"
+          style="background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); color:#fff; padding:8px 20px; border-radius:10px; cursor:pointer; font-family:'Inter',sans-serif; font-size:0.85rem;">✕
+          Close</button>
+      </div>
+
+      <!-- Certificate card -->
+      <div id="certCard" style="
+      position:relative;
+      background:linear-gradient(160deg,#0d0d22 0%,#111827 60%,#0a0f1e 100%);
+      border-radius:24px;
+      padding:0;
+      overflow:hidden;
+      box-shadow:0 0 80px rgba(192,132,252,0.22), 0 0 0 1px rgba(192,132,252,0.18);
+    ">
+        <!-- Top accent bar -->
+        <div
+          style="height:6px; background:linear-gradient(90deg,#c084fc,#f59e0b,#c084fc); background-size:200% auto; animation:gradientShift 4s ease-in-out infinite;">
+        </div>
+
+        <!-- Corner decorations -->
+        <div
+          style="position:absolute; top:18px; left:18px; width:50px; height:50px; border-top:2px solid rgba(192,132,252,0.5); border-left:2px solid rgba(192,132,252,0.5); border-radius:4px 0 0 0;">
+        </div>
+        <div
+          style="position:absolute; top:18px; right:18px; width:50px; height:50px; border-top:2px solid rgba(192,132,252,0.5); border-right:2px solid rgba(192,132,252,0.5); border-radius:0 4px 0 0;">
+        </div>
+        <div
+          style="position:absolute; bottom:18px; left:18px; width:50px; height:50px; border-bottom:2px solid rgba(192,132,252,0.5); border-left:2px solid rgba(192,132,252,0.5); border-radius:0 0 0 4px;">
+        </div>
+        <div
+          style="position:absolute; bottom:18px; right:18px; width:50px; height:50px; border-bottom:2px solid rgba(192,132,252,0.5); border-right:2px solid rgba(192,132,252,0.5); border-radius:0 0 4px 0;">
+        </div>
+
+        <div style="padding:55px 65px; text-align:center; position:relative; z-index:1;">
+
+          <!-- Shield badge -->
+          <div
+            style="width:80px; height:80px; margin:0 auto 24px; background:linear-gradient(135deg,rgba(192,132,252,0.2),rgba(245,158,11,0.15)); border:1px solid rgba(192,132,252,0.35); border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:38px;">
+            🛡</div>
+
+          <!-- Issuer brand -->
+          <p
+            style="font-family:'Space Grotesk',sans-serif; color:#c084fc; letter-spacing:4px; text-transform:uppercase; font-size:0.7rem; font-weight:600; margin-bottom:6px;">
+            ThreatScope — Cyber Defence Training</p>
+
+          <!-- Title -->
+          <h1
+            style="font-family:'Space Grotesk',sans-serif; font-size:clamp(1.8rem,4vw,2.8rem); font-weight:700; letter-spacing:-1px; color:#f1f1f5; line-height:1.1; margin-bottom:28px;">
+            Certificate of Completion</h1>
+
+          <!-- Divider -->
+          <div
+            style="width:120px; height:1px; background:linear-gradient(90deg,transparent,rgba(192,132,252,0.6),transparent); margin:0 auto 28px;">
+          </div>
+
+          <p style="color:rgba(241,241,245,0.5); font-size:0.9rem; margin-bottom:12px;">This is to certify that</p>
+
+          <!-- Name -->
+          <h2 id="certName"
+            style="font-family:'Space Grotesk',sans-serif; font-size:clamp(2rem,5vw,3rem); font-weight:700; letter-spacing:-1px; background:linear-gradient(135deg,#c084fc,#f59e0b); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin:0 0 24px;">
+            Name</h2>
+
+          <p
+            style="color:rgba(241,241,245,0.7); font-size:0.95rem; line-height:1.8; max-width:520px; margin:0 auto 32px;">
+            has successfully completed the <strong style="color:#f1f1f5;">ThreatScope Cyber Awareness Training
+              Programme</strong>, demonstrating knowledge across phishing and AI-generated threats, credential attacks,
+            access control, web exploits, data protection, social engineering, and risk awareness.
+          </p>
+
+          <!-- Stats row -->
+          <div style="display:flex; justify-content:center; gap:32px; flex-wrap:wrap; margin-bottom:36px;">
+            <div
+              style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:16px 24px; min-width:120px;">
+              <div
+                style="font-size:0.65rem; text-transform:uppercase; letter-spacing:2px; color:rgba(241,241,245,0.4); margin-bottom:4px;">
+                Final Score</div>
+              <div id="certScore"
+                style="font-family:'Space Grotesk',sans-serif; font-size:1.6rem; font-weight:700; color:#22c55e;">—
+              </div>
+            </div>
+            <div
+              style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:16px 24px; min-width:120px;">
+              <div
+                style="font-size:0.65rem; text-transform:uppercase; letter-spacing:2px; color:rgba(241,241,245,0.4); margin-bottom:4px;">
+                Modules</div>
+              <div style="font-family:'Space Grotesk',sans-serif; font-size:1.6rem; font-weight:700; color:#c084fc;">4 /
+                4</div>
+            </div>
+            <div
+              style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:16px 24px; min-width:120px;">
+              <div
+                style="font-size:0.65rem; text-transform:uppercase; letter-spacing:2px; color:rgba(241,241,245,0.4); margin-bottom:4px;">
+                Date Issued</div>
+              <div id="certDate"
+                style="font-family:'Space Grotesk',sans-serif; font-size:1.1rem; font-weight:600; color:#f59e0b;">—
+              </div>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div style="width:100%; height:1px; background:rgba(255,255,255,0.06); margin:0 0 32px;"></div>
+
+          <!-- Signature section -->
+          <div style="display:flex; justify-content:center; align-items:flex-end; gap:60px; flex-wrap:wrap;">
+            <div style="text-align:center;">
+              <div
+                style="font-family:'Space Grotesk',sans-serif; font-size:1.5rem; font-weight:700; color:#f1f1f5; font-style:italic; margin-bottom:6px;">
+                Shivam Jambagi</div>
+              <div style="width:160px; height:1px; background:rgba(255,255,255,0.2); margin:0 auto 8px;"></div>
+              <div style="font-size:0.7rem; text-transform:uppercase; letter-spacing:2px; color:rgba(241,241,245,0.4);">
+                Issued By</div>
+            </div>
+            <div style="text-align:center;">
+              <div id="certID"
+                style="font-family:monospace; font-size:0.8rem; color:rgba(192,132,252,0.7); margin-bottom:6px;">
+                CERT-000000</div>
+              <div style="width:160px; height:1px; background:rgba(255,255,255,0.2); margin:0 auto 8px;"></div>
+              <div style="font-size:0.7rem; text-transform:uppercase; letter-spacing:2px; color:rgba(241,241,245,0.4);">
+                Certificate ID</div>
+            </div>
+          </div>
+
+        </div>
+        <!-- Bottom accent bar -->
+        <div style="height:4px; background:linear-gradient(90deg,#c084fc,#f59e0b,#c084fc); opacity:0.5;"></div>
+      </div>
+
+      <!-- Action buttons -->
+      <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:28px;">
+
+        <button onclick="downloadCertificate()"
+          style="display:flex; align-items:center; gap:8px; padding:13px 24px; background:linear-gradient(135deg,#c084fc,#a855f7); border:none; border-radius:14px; color:white; font-weight:600; font-size:0.9rem; cursor:pointer; font-family:'Inter',sans-serif; transition:all 0.3s;">
+          ⬇ Download PNG
+        </button>
+
+        <button onclick="printPhysicalCertificate()"
+          style="display:flex; align-items:center; gap:8px; padding:13px 24px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); border-radius:14px; color:white; font-weight:600; font-size:0.9rem; cursor:pointer; font-family:'Inter',sans-serif; transition:all 0.3s;">
+          🖨 Print / PDF
+        </button>
+
+        <button onclick="shareOnLinkedIn()"
+          style="display:flex; align-items:center; gap:8px; padding:13px 24px; background:rgba(10,102,194,0.9); border:none; border-radius:14px; color:white; font-weight:600; font-size:0.9rem; cursor:pointer; font-family:'Inter',sans-serif; transition:all 0.3s;">
+          🔗 LinkedIn
+        </button>
+
+        <button onclick="document.getElementById('certificateOverlay').style.display='none'; navigateTo('attacks');"
+          style="padding:13px 24px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:14px; color:rgba(241,241,245,0.8); font-weight:500; font-size:0.9rem; cursor:pointer; font-family:'Inter',sans-serif;">
+          Try Another
+        </button>
+
+      </div>
+
+      <!-- LinkedIn tip -->
+      <p style="text-align:center; margin-top:16px; font-size:0.78rem; color:rgba(241,241,245,0.35);">
+        🎉 Share your achievement on LinkedIn to inspire others — and help spread cybersecurity awareness!
+      </p>
+
+    </div>
+  </div>
+
+  <!-- NAME ENTRY MODAL -->
+  <div id="nameEntryModal"
+    style="display:none; position:fixed; inset:0; background:rgba(5,5,16,0.95); z-index:9500; align-items:center; justify-content:center; backdrop-filter:blur(10px); padding:20px;">
+    <div
+      style="background:linear-gradient(160deg,rgba(255,255,255,0.06),rgba(255,255,255,0.025)); border:1px solid rgba(192,132,252,0.35); border-radius:24px; padding:40px; text-align:center; max-width:430px; width:100%; box-shadow:0 0 50px rgba(192,132,252,0.22); position:relative; overflow:hidden;">
+
+      <button onclick="closeCertificateClaim()"
+        style="position:absolute; top:14px; right:14px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); color:#fff; width:34px; height:34px; border-radius:10px; cursor:pointer;">
+        ✕
+      </button>
+
+      <div style="font-size:3rem; margin-bottom:16px;">🎓</div>
+
+      <h3 style="font-family:'Space Grotesk', sans-serif; font-size:1.55rem; margin-bottom:8px;">
+        Claim Your Certificate
+      </h3>
+
+      <p style="color:var(--text-secondary); font-size:0.9rem; line-height:1.7; margin-bottom:24px;">
+        You completed all 4 simulations. Enter your name first, then you can choose when to display your certificate.
+      </p>
+
+      <input type="text" id="certNameInput" placeholder="e.g. Jane Doe"
+        style="width:100%; padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.2); background:rgba(0,0,0,0.5); color:white; font-size:1rem; margin-bottom:18px; text-align:center; font-family:'Inter', sans-serif; outline:none;">
+
+      <button class="btn-primary" onclick="generateMyCertificate()" style="width:100%; padding:14px;">
+        Prepare Certificate
+      </button>
+
+      <p style="font-size:0.72rem; color:var(--text-tertiary); line-height:1.6; margin-top:16px;">
+        Your name is saved locally in this browser so you can reopen the certificate later.
+      </p>
+    </div>
+  </div>
+<div id="authModal"
+    style="display:none; position:fixed; inset:0; z-index:9600; background:rgba(5,5,16,0.94); align-items:center; justify-content:center; padding:20px;">
+    <div
+      style="width:100%; max-width:420px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:24px; padding:32px;">
+      <h3 style="font-family:'Space Grotesk',sans-serif; font-size:1.5rem; margin-bottom:8px;">Login to ThreatScope</h3>
+      <p style="color:var(--text-secondary); font-size:0.9rem; line-height:1.6; margin-bottom:22px;">
+        Save your progress, dashboard stats, mistakes, and certificate securely.
+      </p>
+
+      <input id="authEmail" type="email" placeholder="Email address"
+        style="width:100%; padding:14px; margin-bottom:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.15); background:rgba(0,0,0,0.35); color:white;">
+      <input id="authPassword" type="password" placeholder="Password"
+        style="width:100%; padding:14px; margin-bottom:18px; border-radius:12px; border:1px solid rgba(255,255,255,0.15); background:rgba(0,0,0,0.35); color:white;">
+
+      <button class="btn-primary" onclick="loginUser()" style="width:100%; margin-bottom:10px;">Login</button>
+      <button class="btn-secondary" onclick="registerUser()" style="width:100%; margin-bottom:10px;">Create
+        Account</button>
+      <button onclick="closeAuthModal()"
+        style="width:100%; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.04); color:white;">Cancel</button>
+
+      <p id="authMessage" style="margin-top:14px; color:var(--text-secondary); font-size:0.8rem; line-height:1.5;"></p>
+    </div>
+  </div>
+  <script type="module" src="js/main.js"></script>
+</body>
+
+</html>
